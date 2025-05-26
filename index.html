@@ -2,202 +2,168 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Occupant Thermal Comfort & Indoor Environment Feedback Tool</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
-    * {
-      box-sizing: border-box;
-    }
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f4f7f9;
-      margin: 0;
-      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #e8f0fe;
       display: flex;
-      min-height: 100vh;
       justify-content: center;
       align-items: center;
+      height: 100vh;
+      margin: 0;
     }
+
     .container {
-      background: white;
-      padding: 2.5rem 3rem;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgb(0 0 0 / 0.1);
-      max-width: 420px;
+      background: #ffffff;
+      padding: 2rem 2.5rem;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      max-width: 500px;
       width: 95%;
-      text-align: center;
+      transition: all 0.3s ease-in-out;
     }
-    .logo {
-      max-width: 160px;
-      margin: 0 auto 1.5rem auto;
-      display: block;
-    }
+
     h1 {
-      margin-bottom: 1.5rem;
-      color: #333;
-      font-weight: 700;
-      font-size: 1.5rem;
-      line-height: 1.2;
-    }
-    select, input[type="text"], input[type="date"], input[type="time"] {
-      width: 100%;
-      padding: 12px 15px;
-      margin-bottom: 1.25rem;
-      border: 1.8px solid #ccc;
-      border-radius: 8px;
-      font-size: 1rem;
-      transition: border-color 0.3s ease;
-    }
-    select:focus, input[type="text"]:focus, input[type="date"]:focus, input[type="time"]:focus {
-      outline: none;
-      border-color: #0078d7;
-      box-shadow: 0 0 5px #0078d7aa;
-    }
-    button {
-      width: 100%;
-      background-color: #0078d7;
-      color: white;
-      border: none;
-      padding: 14px 0;
-      font-size: 1.1rem;
-      font-weight: 600;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background-color 0.25s ease;
-    }
-    button:hover {
-      background-color: #005a9e;
-    }
-    .footer-text {
-      margin-top: 1.5rem;
-      font-size: 0.9rem;
-      color: #666;
-      line-height: 1.4;
       text-align: center;
+      font-size: 1.2rem;
+      color: #003366;
+      margin-bottom: 1.5rem;
     }
+
     label {
       font-weight: 600;
-      text-align: left;
+      margin-top: 1rem;
       display: block;
-      margin-bottom: 0.5rem;
+      color: #333;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 0.3rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: 0.2s ease-in-out;
+    }
+
+    input:focus, select:focus {
+      border-color: #0078d7;
+      outline: none;
+      box-shadow: 0 0 5px rgba(0, 120, 215, 0.3);
+    }
+
+    .time-selects {
+      display: flex;
+      gap: 10px;
+      margin-top: 0.3rem;
+    }
+
+    .time-selects select {
+      flex: 1;
+    }
+
+    button {
+      margin-top: 1.5rem;
+      background: #0078d7;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+    }
+
+    button:hover {
+      background: #005ea6;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Company Logo - Replace src with your logo path -->
-    <img src="https://yourcompany.com/logo.png" alt="Company Logo" class="logo" />
-
     <h1>Occupant Thermal Comfort & Indoor Environment Feedback Tool</h1>
 
-    <input
-      type="text"
-      id="heatPumpTag"
-      placeholder="Heat Pump Tag Number"
-      aria-label="Heat Pump Tag Number"
-      required
-    />
-    <input
-      type="text"
-      id="roomNumber"
-      placeholder="Room Number"
-      aria-label="Room Number"
-      required
-    />
-    <select id="comfort" aria-label="Select comfort level">
+    <label>Heat Pump Tag Number *</label>
+    <input type="text" id="heatPumpTag" placeholder="e.g., HP-1023" required />
+
+    <label>Room Number *</label>
+    <input type="text" id="roomNumber" placeholder="e.g., 2B-45" required />
+
+    <label>Comfort Level *</label>
+    <select id="comfort">
+      <option value="" disabled selected>Select comfort level</option>
       <option value="Too Cold">Too Cold</option>
-      <option value="Comfortable" selected>Comfortable</option>
+      <option value="Comfortable">Comfortable</option>
       <option value="Too Hot">Too Hot</option>
     </select>
 
-    <label for="feedbackDate">Select Feedback Date (MM/DD/YYYY):</label>
-    <input type="date" id="feedbackDate" aria-label="Feedback Date" required />
+    <label>Feedback Date (MM/DD/YYYY) *</label>
+    <input type="date" id="feedbackDate" />
 
-    <label for="feedbackTime">Select Feedback Time (24-hour HH:MM:SS):</label>
-    <input
-      type="time"
-      id="feedbackTime"
-      aria-label="Feedback Time"
-      step="1"
-      required
-    />
+    <label>Feedback Time (24-hour HH:MM:SS) *</label>
+    <div class="time-selects">
+      <select id="hour"></select>
+      <select id="minute"></select>
+      <select id="second"></select>
+    </div>
 
-    <button onclick="submitFeedback()">Submit</button>
-
-    <p class="footer-text">
-      Help us improve your environment by sharing how comfortable you feel
-      regarding the room temperature.
-    </p>
+    <button onclick="submitFeedback()">Submit Feedback</button>
   </div>
 
   <script>
+    // Populate time dropdowns
+    window.onload = function () {
+      for (let i = 0; i < 24; i++) {
+        const val = String(i).padStart(2, '0');
+        document.getElementById("hour").innerHTML += `<option value="${val}">${val}</option>`;
+      }
+      for (let i = 0; i < 60; i++) {
+        const val = String(i).padStart(2, '0');
+        document.getElementById("minute").innerHTML += `<option value="${val}">${val}</option>`;
+        document.getElementById("second").innerHTML += `<option value="${val}">${val}</option>`;
+      }
+    };
+
     function formatDateToMMDDYYYY(dateString) {
-      // Input dateString is in YYYY-MM-DD from date input
-      const parts = dateString.split("-");
-      if (parts.length !== 3) return dateString;
-      return `${parts[1]}/${parts[2]}/${parts[0]}`;
+      const [year, month, day] = dateString.split("-");
+      return `${month}/${day}/${year}`;
     }
 
     function submitFeedback() {
-      const heatPumpTag = document.getElementById("heatPumpTag");
-      const roomNumber = document.getElementById("roomNumber");
-      const comfort = document.getElementById("comfort");
-      const feedbackDate = document.getElementById("feedbackDate");
-      const feedbackTime = document.getElementById("feedbackTime");
+      const heatPumpTag = document.getElementById("heatPumpTag").value;
+      const roomNumber = document.getElementById("roomNumber").value;
+      const comfort = document.getElementById("comfort").value;
+      const feedbackDateRaw = document.getElementById("feedbackDate").value;
+      const hour = document.getElementById("hour").value;
+      const minute = document.getElementById("minute").value;
+      const second = document.getElementById("second").value;
 
-      if (!heatPumpTag.value.trim()) {
-        alert("Please enter the Heat Pump Tag Number.");
-        heatPumpTag.focus();
-        return;
-      }
-      if (!roomNumber.value.trim()) {
-        alert("Please enter the Room Number.");
-        roomNumber.focus();
-        return;
-      }
-      if (!feedbackDate.value) {
-        alert("Please select the feedback date.");
-        feedbackDate.focus();
-        return;
-      }
-      if (!feedbackTime.value) {
-        alert("Please select the feedback time.");
-        feedbackTime.focus();
+      if (!heatPumpTag || !roomNumber || !comfort || !feedbackDateRaw || !hour || !minute || !second) {
+        alert("Please fill in all fields.");
         return;
       }
 
-      // Format date to MM/DD/YYYY for sending
-      const formattedDate = formatDateToMMDDYYYY(feedbackDate.value);
+      const feedbackDate = formatDateToMMDDYYYY(feedbackDateRaw);
+      const feedbackTime = `${hour}:${minute}:${second}`;
 
       fetch("http://127.0.0.1:5000/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          heatPumpTag: heatPumpTag.value.trim(),
-          roomNumber: roomNumber.value.trim(),
-          comfort: comfort.value,
-          feedbackDate: formattedDate,
-          feedbackTime: feedbackTime.value
-        }),
+          heatPumpTag,
+          roomNumber,
+          comfort,
+          feedbackDate,
+          feedbackTime
+        })
       })
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return res.json();
-        })
-        .then((data) => {
-          alert("Feedback submitted! Thank you.");
-          heatPumpTag.value = "";
-          roomNumber.value = "";
-          feedbackDate.value = "";
-          feedbackTime.value = "";
-          comfort.selectedIndex = 1; // reset to Comfortable
-        })
-        .catch((error) => {
-          alert("Failed to submit feedback. Please try again.");
-          console.error("Error:", error);
-        });
+      .then(res => res.json())
+      .then(() => {
+        alert("Feedback submitted successfully!");
+      })
+      .catch(() => {
+        alert("Error submitting feedback. Please try again.");
+      });
     }
   </script>
 </body>
