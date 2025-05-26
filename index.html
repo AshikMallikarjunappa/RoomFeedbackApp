@@ -2,63 +2,58 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Occupant Thermal Comfort & Indoor Environment Feedback Tool</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Occupant Thermal Comfort & Indoor Environment Feedback Tool</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #e8f0fe;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: #e9eff5;
+      margin: 0;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      margin: 0;
+      min-height: 100vh;
     }
 
     .container {
-      background: #ffffff;
-      padding: 2rem 2.5rem;
+      background: #fff;
+      padding: 2rem;
       border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-      max-width: 500px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
       width: 95%;
-      transition: all 0.3s ease-in-out;
+      max-width: 500px;
+    }
+
+    img.logo {
+      display: block;
+      margin: 0 auto 1rem;
+      max-width: 120px;
     }
 
     h1 {
       text-align: center;
       font-size: 1.2rem;
-      color: #003366;
       margin-bottom: 1.5rem;
-    }
-
-    label {
-      font-weight: 600;
-      margin-top: 1rem;
-      display: block;
-      color: #333;
     }
 
     input, select, button {
       width: 100%;
       padding: 0.75rem;
-      margin-top: 0.3rem;
+      margin: 0.5rem 0;
+      border-radius: 10px;
       border: 1px solid #ccc;
-      border-radius: 8px;
       font-size: 1rem;
-      transition: 0.2s ease-in-out;
     }
 
-    input:focus, select:focus {
-      border-color: #0078d7;
-      outline: none;
-      box-shadow: 0 0 5px rgba(0, 120, 215, 0.3);
+    label {
+      font-weight: 600;
+      display: block;
+      margin-top: 0.5rem;
     }
 
     .time-selects {
       display: flex;
       gap: 10px;
-      margin-top: 0.3rem;
     }
 
     .time-selects select {
@@ -66,85 +61,108 @@
     }
 
     button {
-      margin-top: 1.5rem;
       background: #0078d7;
-      color: #fff;
+      color: white;
+      border: none;
       font-weight: bold;
       cursor: pointer;
-      border: none;
+      transition: background 0.3s ease;
     }
 
     button:hover {
       background: #005ea6;
     }
+
+    .submitted {
+      animation: pulse 0.5s ease;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); background-color: #0078d7; }
+      50% { transform: scale(1.05); background-color: #00c0ff; }
+      100% { transform: scale(1); background-color: #0078d7; }
+    }
+
+    #qrcode {
+      margin-top: 1.5rem;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
   <div class="container">
+    <img src="c:\Users\ashikm\Documents\RoomFeedbackApp\KCO-Logo.png" alt="Company Logo" class="logo" />
     <h1>Occupant Thermal Comfort & Indoor Environment Feedback Tool</h1>
 
-    <label>Heat Pump Tag Number *</label>
-    <input type="text" id="heatPumpTag" placeholder="e.g., HP-1023" required />
+    <input type="text" id="heatPumpTag" placeholder="Heat Pump Tag Number" required />
+    <input type="text" id="roomNumber" placeholder="Room Number" required />
 
-    <label>Room Number *</label>
-    <input type="text" id="roomNumber" placeholder="e.g., 2B-45" required />
-
-    <label>Comfort Level *</label>
+    <label for="comfort">Comfort Level</label>
     <select id="comfort">
-      <option value="" disabled selected>Select comfort level</option>
       <option value="Too Cold">Too Cold</option>
-      <option value="Comfortable">Comfortable</option>
+      <option value="Comfortable" selected>Comfortable</option>
       <option value="Too Hot">Too Hot</option>
     </select>
 
-    <label>Feedback Date (MM/DD/YYYY) *</label>
-    <input type="date" id="feedbackDate" />
+    <label for="feedbackDate">Feedback Date (MM/DD/YYYY)</label>
+    <input type="date" id="feedbackDate" required />
 
-    <label>Feedback Time (24-hour HH:MM:SS) *</label>
+    <label for="feedbackTime">Feedback Time (24-hr HH:MM:SS)</label>
     <div class="time-selects">
       <select id="hour"></select>
       <select id="minute"></select>
       <select id="second"></select>
     </div>
 
-    <button onclick="submitFeedback()">Submit Feedback</button>
+    <button onclick="submitFeedback()">Submit</button>
+
+    <div id="qrcode"></div>
   </div>
+
+  <!-- QR Code Library -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
 
   <script>
     // Populate time dropdowns
     window.onload = function () {
-      for (let i = 0; i < 24; i++) {
-        const val = String(i).padStart(2, '0');
-        document.getElementById("hour").innerHTML += `<option value="${val}">${val}</option>`;
+      const hour = document.getElementById("hour");
+      const minute = document.getElementById("minute");
+      const second = document.getElementById("second");
+
+      for (let h = 0; h < 24; h++) {
+        let val = h.toString().padStart(2, '0');
+        hour.innerHTML += `<option value="${val}">${val}</option>`;
       }
-      for (let i = 0; i < 60; i++) {
-        const val = String(i).padStart(2, '0');
-        document.getElementById("minute").innerHTML += `<option value="${val}">${val}</option>`;
-        document.getElementById("second").innerHTML += `<option value="${val}">${val}</option>`;
+
+      for (let m = 0; m < 60; m++) {
+        let val = m.toString().padStart(2, '0');
+        minute.innerHTML += `<option value="${val}">${val}</option>`;
+        second.innerHTML += `<option value="${val}">${val}</option>`;
       }
+
+      // Generate QR Code
+      QRCode.toCanvas(document.getElementById("qrcode"), "https://ashikmallikarjunappa.github.io/RoomFeedbackApp/", function (error) {
+        if (error) console.error(error);
+      });
     };
 
     function formatDateToMMDDYYYY(dateString) {
-      const [year, month, day] = dateString.split("-");
-      return `${month}/${day}/${year}`;
+      const parts = dateString.split("-");
+      if (parts.length !== 3) return dateString;
+      return `${parts[1]}/${parts[2]}/${parts[0]}`;
     }
 
     function submitFeedback() {
-      const heatPumpTag = document.getElementById("heatPumpTag").value;
-      const roomNumber = document.getElementById("roomNumber").value;
+      const heatPumpTag = document.getElementById("heatPumpTag").value.trim();
+      const roomNumber = document.getElementById("roomNumber").value.trim();
       const comfort = document.getElementById("comfort").value;
-      const feedbackDateRaw = document.getElementById("feedbackDate").value;
-      const hour = document.getElementById("hour").value;
-      const minute = document.getElementById("minute").value;
-      const second = document.getElementById("second").value;
+      const feedbackDate = formatDateToMMDDYYYY(document.getElementById("feedbackDate").value);
+      const time = `${document.getElementById("hour").value}:${document.getElementById("minute").value}:${document.getElementById("second").value}`;
 
-      if (!heatPumpTag || !roomNumber || !comfort || !feedbackDateRaw || !hour || !minute || !second) {
-        alert("Please fill in all fields.");
+      if (!heatPumpTag || !roomNumber || !feedbackDate || !time) {
+        alert("⚠️ Please fill in all fields.");
         return;
       }
-
-      const feedbackDate = formatDateToMMDDYYYY(feedbackDateRaw);
-      const feedbackTime = `${hour}:${minute}:${second}`;
 
       fetch("http://127.0.0.1:5000/submit", {
         method: "POST",
@@ -154,15 +172,19 @@
           roomNumber,
           comfort,
           feedbackDate,
-          feedbackTime
-        })
+          feedbackTime: time
+        }),
       })
-      .then(res => res.json())
-      .then(() => {
-        alert("Feedback submitted successfully!");
+      .then((res) => res.json())
+      .then((data) => {
+        const button = document.querySelector("button");
+        button.classList.add("submitted");
+        setTimeout(() => button.classList.remove("submitted"), 1000);
+        alert("✅ Feedback submitted successfully!");
       })
-      .catch(() => {
-        alert("Error submitting feedback. Please try again.");
+      .catch((err) => {
+        alert("❌ Error submitting feedback.");
+        console.error(err);
       });
     }
   </script>
